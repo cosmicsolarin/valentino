@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Valentino Orders</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vara@1.4.0/lib/vara.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Roboto", sans-serif;
+        background: url("/bg.jpg") no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+      }
+
+      .overlay {
+        background-color: rgba(28, 28, 28, 0.6);
+        min-height: 100vh;
+        padding: 40px 20px;
+        width: 100vw;
+      }
+
+      #vara-heading {
+        text-align: center;
+        width: 600px;
+        margin: 0 auto 40px auto;
+        height: 120px;
+      }
+
+      #reset-btn {
+        display: block;
+        margin: 20px auto 30px auto;
+        background-color: white;
+        color: #1c1c1c;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1em;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      #reset-btn:hover {
+        background-color: #ccc;
+      }
+
+      #current-order {
+        background: #2c2c2c;
+        border: 2px solid #444;
+        padding: 20px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        text-align: center;
+        min-height: 180px;
+        position: relative;
+      }
+
+      #order-animation {
+        width: 100%;
+        height: auto;
+        min-height: 130px;
+      }
+
+      .btn-container,
+      .container,
+      .order-container,
+      .completed-container {
+        display: flex;
+        width: 100vw;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #complete-btn {
+        background-color: white;
+        color: #0a0a0a;
+        border: none;
+        padding: 12px 24px;
+        font-size: 1em;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      #complete-btn:hover {
+        background-color: #ccc;
+      }
+
+      #log {
+        margin-top: 40px;
+        max-width: 700px;
+        width: 90%;
+      }
+
+      .log-entry {
+        background: #292929;
+        border-left: 4px solid #666;
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+      }
+
+      #log h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 1.8em;
+        border-bottom: 1px solid #444;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="overlay">
+      <!-- Animated Main Heading -->
+      <div class="container">
+        <div id="vara-heading"></div>
+      </div>
+      <div class="btn-container">
+        <button id="reset-btn">Reset All Orders</button>
+      </div>
+
+      <div class="order-container">
+        <div id="current-order">
+          <div id="order-animation">
+            <h2>Waiting for next order...</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="completed-container">
+        <div id="log">
+          <h3>Completed Orders</h3>
+          <div id="log-entries"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Animate main heading
+      new Vara(
+        "#vara-heading",
+        "https://cdn.jsdelivr.net/npm/vara@1.4.0/fonts/Satisfy/SatisfySL.json",
+        [
+          {
+            text: "Valentino - Fuel Your Desire",
+            y: 20,
+            textAlign: "center",
+            fromCurrentPosition: { y: false },
+            duration: 2000,
+            fontSize: 40,
+            strokeWidth: 3,
+            color: "white",
+          },
+        ]
+      );
+
+      let currentOrder = null;
+
+      const currentOrderDiv = document.getElementById("current-order");
+      const orderAnimationDiv = document.getElementById("order-animation");
+      const logEntriesDiv = document.getElementById("log-entries");
+      const resetBtn = document.getElementById("reset-btn");
+
+      function animateOrderText(lines) {
+        orderAnimationDiv.innerHTML = "";
+        const oldBtn = document.getElementById("complete-btn");
+        if (oldBtn) oldBtn.remove();
+
+        new Vara(
+          "#order-animation",
+          "https://cdn.jsdelivr.net/npm/vara@1.4.0/fonts/Satisfy/SatisfySL.json",
+          lines,
+          {
+            fontSize: 30,
+            strokeWidth: 1,
+            color: "#fffef9",
+            duration: 2500,
+            onComplete: () => {
+              const btn = document.createElement("button");
+              btn.id = "complete-btn";
+              btn.innerText = "Complete";
+              btn.addEventListener("click", moveToLog);
+              currentOrderDiv.appendChild(btn);
+            },
+          }
+        );
+      }
+
+      function showCurrentOrder(order) {
+        currentOrder = order;
+
+        const orderLines = [
+          { text: order.user, y: 20 },
+          { text: `Drink: ${order.drink}`, y: 60 },
+          { text: `Payment: ${order.cost}`, y: 100 },
+        ];
+
+        if (order.dare) {
+          orderLines.push({ text: `Dare: ${order.dare}`, y: 140 });
+        }
+
+        animateOrderText(orderLines);
+      }
+
+      function clearOrderAnimation() {
+        orderAnimationDiv.innerHTML = "<h2>Waiting for next order...</h2>";
+        const btn = document.getElementById("complete-btn");
+        if (btn) btn.remove();
+      }
+
+      function moveToLog() {
+        if (!currentOrder) return;
+
+        const entry = document.createElement("div");
+        entry.className = "log-entry";
+        entry.innerHTML = `<strong>${currentOrder.user}</strong> - ${
+          currentOrder.drink
+        } - ${currentOrder.cost}${
+          currentOrder.dare ? " - " + currentOrder.dare : ""
+        }`;
+
+        logEntriesDiv.prepend(entry);
+        gsap.from(entry, { opacity: 0, y: 20, duration: 0.5 });
+
+        currentOrder = null;
+        clearOrderAnimation();
+      }
+
+      resetBtn.addEventListener("click", () => {
+        fetch("/api/reset", { method: "POST" })
+          .then((res) => res.json())
+          .then(() => {
+            clearOrderAnimation();
+            logEntriesDiv.innerHTML = "";
+            currentOrder = null;
+          })
+          .catch((err) => {
+            alert("Failed to reset: " + err.message);
+          });
+      });
+
+      const evtSource = new EventSource("/events");
+
+      evtSource.onmessage = function (event) {
+        try {
+          let orders = JSON.parse(event.data);
+          const order = orders[orders.length - 1];
+          if (!order || !order.user) return;
+
+          if (currentOrder) moveToLog();
+
+          showCurrentOrder(order);
+        } catch (e) {
+          console.error("Invalid event data", e);
+        }
+      };
+    </script>
+  </body>
+</html>
