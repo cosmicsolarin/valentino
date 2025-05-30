@@ -34,7 +34,8 @@
         height: 120px;
       }
 
-      #reset-btn {
+      #reset-btn,
+      #test-order-btn {
         display: block;
         margin: 20px auto 30px auto;
         background-color: white;
@@ -46,7 +47,8 @@
         cursor: pointer;
       }
 
-      #reset-btn:hover {
+      #reset-btn:hover,
+      #test-order-btn:hover {
         background-color: #ccc;
       }
 
@@ -79,46 +81,47 @@
         align-items: center;
       }
 
-      #complete-btn {
-        background-color: white;
-        color: #0a0a0a;
-        border: none;
-        padding: 12px 24px;
+      #recipe-toggle-btn {
+        margin: 20px auto 0;
+        padding: 10px 25px;
         font-size: 1em;
+        background-color: #ffd700;
+        border: none;
         border-radius: 8px;
         cursor: pointer;
-        margin-top: 20px;
+        color: #1c1c1c;
+        font-weight: 700;
+        transition: background-color 0.3s ease;
+        display: none; /* Hidden initially, shown when order exists */
       }
-
-      #complete-btn:hover {
-        background-color: #ccc;
-      }
-
-      #recipe-toggle-btn {
-        margin-top: 15px;
-        padding: 8px 16px;
-        border: none;
-        border-radius: 6px;
-        background-color: #eee;
-        color: #111;
-        cursor: pointer;
-        font-size: 1em;
-      }
-
       #recipe-toggle-btn:hover {
-        background-color: #ddd;
+        background-color: #e6c200;
       }
 
-      #recipe-details {
-        margin-top: 12px;
-        max-height: 0;
-        opacity: 0;
-        overflow: hidden;
-        transition: max-height 0.5s ease, opacity 0.5s ease;
-        text-align: left;
-        color: #eee;
-        font-size: 0.9em;
+      #recipe-info {
+        max-width: 600px;
+        margin: 10px auto 30px;
+        padding: 15px;
+        background-color: rgba(40, 40, 40, 0.85);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        border-radius: 8px;
+        border: 1px solid #555;
+        color: white;
+        font-size: 0.95em;
         line-height: 1.4em;
+        overflow: hidden;
+
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        opacity: 0;
+        transition: max-height 0.5s ease, padding 0.5s ease, opacity 0.5s ease;
+      }
+      #recipe-info.show {
+        max-height: 1000px; /* big enough to show content */
+        padding-top: 15px;
+        padding-bottom: 15px;
+        opacity: 1;
       }
 
       #log {
@@ -150,6 +153,10 @@
       <div class="container">
         <div id="vara-heading"></div>
       </div>
+
+      <!-- Test Demo Order Button -->
+      <button id="test-order-btn">Test Demo Order</button>
+
       <div class="btn-container">
         <button id="reset-btn">Reset All Orders</button>
       </div>
@@ -159,8 +166,8 @@
           <div id="order-animation">
             <h2>Waiting for next order...</h2>
           </div>
-          <!-- Recipe toggle button and details go here -->
-          <!-- We'll inject these dynamically -->
+          <button id="recipe-toggle-btn">Show Recipe</button>
+          <div id="recipe-info"></div>
         </div>
       </div>
 
@@ -197,12 +204,15 @@
       const orderAnimationDiv = document.getElementById("order-animation");
       const logEntriesDiv = document.getElementById("log-entries");
       const resetBtn = document.getElementById("reset-btn");
+      const testOrderBtn = document.getElementById("test-order-btn");
+      const recipeToggleBtn = document.getElementById("recipe-toggle-btn");
+      const recipeInfoDiv = document.getElementById("recipe-info");
 
       function animateOrderText(lines) {
         orderAnimationDiv.innerHTML = "";
-        removeRecipeElements();
-        const oldBtn = document.getElementById("complete-btn");
-        if (oldBtn) oldBtn.remove();
+        recipeInfoDiv.classList.remove("show");
+        recipeToggleBtn.style.display = "none";
+        recipeToggleBtn.innerText = "Show Recipe";
 
         new Vara(
           "#order-animation",
@@ -214,71 +224,13 @@
             color: "#fffef9",
             duration: 2500,
             onComplete: () => {
-              const btn = document.createElement("button");
-              btn.id = "complete-btn";
-              btn.innerText = "Complete";
-              btn.addEventListener("click", moveToLog);
-              currentOrderDiv.appendChild(btn);
-
-              // If recipe exists, show toggle button
               if (currentOrder && currentOrder.recipe) {
-                addRecipeToggle(currentOrder.recipe);
+                recipeToggleBtn.style.display = "inline-block";
               }
             },
           }
         );
       }
-
-      // Remove recipe toggle and details if exist
-      function removeRecipeElements() {
-        const toggleBtn = document.getElementById("recipe-toggle-btn");
-        const recipeDetails = document.getElementById("recipe-details");
-        if (toggleBtn) toggleBtn.remove();
-        if (recipeDetails) recipeDetails.remove();
-      }
-
-      // Add recipe toggle button and details container
-      function addRecipeToggle(recipe) {
-        removeRecipeElements();
-
-        // Create toggle button
-        const toggleBtn = document.createElement("button");
-        toggleBtn.id = "recipe-toggle-btn";
-        toggleBtn.innerText = "Show Recipe";
-
-        // Create recipe details container
-        const recipeDiv = document.createElement("div");
-        recipeDiv.id = "recipe-details";
-        recipeDiv.innerHTML = `
-          <strong>Ingredients:</strong><br>
-          ${recipe.ingredients
-            .map((i) => `&nbsp;&nbsp;&bull; ${i}`)
-            .join("<br>")}
-          <br><br>
-          <strong>Method:</strong><br>
-          ${recipe.method}
-        `;
-
-        // Toggle function with animation via CSS transition
-        toggleBtn.addEventListener("click", () => {
-          const isVisible =
-            recipeDiv.style.maxHeight !== "0px" &&
-            recipeDiv.style.maxHeight !== "";
-          if (isVisible) {
-            recipeDiv.style.maxHeight = "0";
-            recipeDiv.style.opacity = 0;
-            toggleBtn.innerText = "Show Recipe";
-          } else {
-            recipeDiv.style.maxHeight = recipeDiv.scrollHeight + "px";
-            recipeDiv.style.opacity = 1;
-            toggleBtn.innerText = "Hide Recipe";
-          }
-        });
-
-        currentOrderDiv.appendChild(toggleBtn);
-        currentOrderDiv.appendChild(recipeDiv);
-      }
-
       function showCurrentOrder(order) {
         currentOrder = order;
 
@@ -293,32 +245,63 @@
         }
 
         animateOrderText(orderLines);
+
+        if (order.recipe) {
+          const ingredientsHTML = order.recipe.ingredients
+            .map((item) => `<li>${item}</li>`)
+            .join("");
+
+          recipeInfoDiv.innerHTML = `
+      <h3 style="margin-bottom: 10px; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.4em; color: #ffd700;">Ingredients</h3>
+      <ul style="
+        list-style-type: square;
+        padding-left: 25px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-size: 1em;
+        line-height: 1.6em;
+        color: #f0f0f0;
+      ">
+        ${ingredientsHTML}
+      </ul>
+      <h3 style="margin-bottom: 10px; font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.4em; color: #ffd700;">Method</h3>
+      <p style="
+        font-size: 1em;
+        line-height: 1.6em;
+        color: #ddd;
+        margin-top: 0;
+      ">${order.recipe.method}</p>
+    `;
+
+          // Show recipe toggle button and recipe info immediately
+          recipeToggleBtn.style.display = "inline-block";
+          recipeInfoDiv.classList.add("show");
+          recipeToggleBtn.innerText = "Hide Recipe";
+        } else {
+          recipeInfoDiv.innerHTML = "";
+          recipeInfoDiv.classList.remove("show");
+          recipeToggleBtn.style.display = "none";
+        }
       }
 
       function clearOrderAnimation() {
         orderAnimationDiv.innerHTML = "<h2>Waiting for next order...</h2>";
-        const btn = document.getElementById("complete-btn");
-        if (btn) btn.remove();
-        removeRecipeElements();
-      }
-
-      function moveToLog() {
-        if (!currentOrder) return;
-
-        const entry = document.createElement("div");
-        entry.className = "log-entry";
-        entry.innerHTML = `<strong>${currentOrder.user}</strong> - ${
-          currentOrder.drink
-        } - ${currentOrder.cost}${
-          currentOrder.dare ? " - " + currentOrder.dare : ""
-        }`;
-
-        logEntriesDiv.prepend(entry);
-        gsap.from(entry, { opacity: 0, y: 20, duration: 0.5 });
-
+        recipeInfoDiv.classList.remove("show");
+        recipeToggleBtn.style.display = "none";
         currentOrder = null;
-        clearOrderAnimation();
       }
+
+      recipeToggleBtn.addEventListener("click", () => {
+        const isVisible = recipeInfoDiv.classList.contains("show");
+        if (isVisible) {
+          recipeInfoDiv.classList.remove("show");
+          recipeToggleBtn.innerText = "Show Recipe";
+        } else {
+          recipeInfoDiv.classList.add("show");
+          recipeToggleBtn.innerText = "Hide Recipe";
+          recipeInfoDiv.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
 
       resetBtn.addEventListener("click", () => {
         fetch("/api/reset", { method: "POST" })
@@ -328,24 +311,60 @@
             logEntriesDiv.innerHTML = "";
             currentOrder = null;
           })
-          .catch((err) => {
-            alert("Failed to reset: " + err.message);
-          });
+          .catch((err) => console.error(err));
       });
 
-      const evtSource = new EventSource("/events");
+      testOrderBtn.addEventListener("click", manualTestOrder);
 
-      evtSource.onmessage = function (event) {
+      function manualTestOrder() {
+        const testOrder = {
+          user: "Alex",
+          drink: "Cosmopolitan",
+          cost: "£6",
+          dare: "Sing a song",
+          recipe: {
+            ingredients: [
+              "50ml vodka",
+              "15ml Cointreau",
+              "15ml cranberry juice",
+              "10ml fresh lime juice",
+            ],
+            method:
+              "Shake all ingredients with ice and strain into a chilled cocktail glass.",
+          },
+        };
+
+        showCurrentOrder(testOrder);
+        addLogEntry(testOrder);
+      }
+
+      function addLogEntry(order) {
+        const entry = document.createElement("div");
+        entry.className = "log-entry";
+        entry.innerHTML = `
+          <strong>User:</strong> ${order.user} <br />
+          <strong>Drink:</strong> ${order.drink} <br />
+          <strong>Payment:</strong> ${order.cost} <br />
+          ${order.dare ? `<strong>Dare:</strong> ${order.dare} <br />` : ""}
+          ${order.recipe ? `<em>Recipe included</em>` : ""}
+        `;
+        logEntriesDiv.prepend(entry);
+      }
+
+      // Connect to SSE for live orders (optional)
+      // Commented here as no SSE endpoint in demo
+
+      const events = new EventSource("/events");
+      events.onmessage = (event) => {
         try {
-          let orders = JSON.parse(event.data);
-          const order = orders[orders.length - 1];
-          if (!order || !order.user) return;
-
-          if (currentOrder) moveToLog();
-
-          showCurrentOrder(order);
+          const data = JSON.parse(event.data);
+          const order = data[data.length - 1];
+          if (order.order) {
+            showCurrentOrder(order.order);
+            addLogEntry(order.order);
+          }
         } catch (e) {
-          console.error("Invalid event data", e);
+          console.error("Error parsing event data", e);
         }
       };
     </script>
