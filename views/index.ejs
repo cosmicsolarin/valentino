@@ -94,6 +94,33 @@
         background-color: #ccc;
       }
 
+      #recipe-toggle-btn {
+        margin-top: 15px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: #eee;
+        color: #111;
+        cursor: pointer;
+        font-size: 1em;
+      }
+
+      #recipe-toggle-btn:hover {
+        background-color: #ddd;
+      }
+
+      #recipe-details {
+        margin-top: 12px;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease, opacity 0.5s ease;
+        text-align: left;
+        color: #eee;
+        font-size: 0.9em;
+        line-height: 1.4em;
+      }
+
       #log {
         margin-top: 40px;
         max-width: 700px;
@@ -132,6 +159,8 @@
           <div id="order-animation">
             <h2>Waiting for next order...</h2>
           </div>
+          <!-- Recipe toggle button and details go here -->
+          <!-- We'll inject these dynamically -->
         </div>
       </div>
 
@@ -171,6 +200,7 @@
 
       function animateOrderText(lines) {
         orderAnimationDiv.innerHTML = "";
+        removeRecipeElements();
         const oldBtn = document.getElementById("complete-btn");
         if (oldBtn) oldBtn.remove();
 
@@ -189,9 +219,64 @@
               btn.innerText = "Complete";
               btn.addEventListener("click", moveToLog);
               currentOrderDiv.appendChild(btn);
+
+              // If recipe exists, show toggle button
+              if (currentOrder && currentOrder.recipe) {
+                addRecipeToggle(currentOrder.recipe);
+              }
             },
           }
         );
+      }
+
+      // Remove recipe toggle and details if exist
+      function removeRecipeElements() {
+        const toggleBtn = document.getElementById("recipe-toggle-btn");
+        const recipeDetails = document.getElementById("recipe-details");
+        if (toggleBtn) toggleBtn.remove();
+        if (recipeDetails) recipeDetails.remove();
+      }
+
+      // Add recipe toggle button and details container
+      function addRecipeToggle(recipe) {
+        removeRecipeElements();
+
+        // Create toggle button
+        const toggleBtn = document.createElement("button");
+        toggleBtn.id = "recipe-toggle-btn";
+        toggleBtn.innerText = "Show Recipe";
+
+        // Create recipe details container
+        const recipeDiv = document.createElement("div");
+        recipeDiv.id = "recipe-details";
+        recipeDiv.innerHTML = `
+          <strong>Ingredients:</strong><br>
+          ${recipe.ingredients
+            .map((i) => `&nbsp;&nbsp;&bull; ${i}`)
+            .join("<br>")}
+          <br><br>
+          <strong>Method:</strong><br>
+          ${recipe.method}
+        `;
+
+        // Toggle function with animation via CSS transition
+        toggleBtn.addEventListener("click", () => {
+          const isVisible =
+            recipeDiv.style.maxHeight !== "0px" &&
+            recipeDiv.style.maxHeight !== "";
+          if (isVisible) {
+            recipeDiv.style.maxHeight = "0";
+            recipeDiv.style.opacity = 0;
+            toggleBtn.innerText = "Show Recipe";
+          } else {
+            recipeDiv.style.maxHeight = recipeDiv.scrollHeight + "px";
+            recipeDiv.style.opacity = 1;
+            toggleBtn.innerText = "Hide Recipe";
+          }
+        });
+
+        currentOrderDiv.appendChild(toggleBtn);
+        currentOrderDiv.appendChild(recipeDiv);
       }
 
       function showCurrentOrder(order) {
@@ -214,6 +299,7 @@
         orderAnimationDiv.innerHTML = "<h2>Waiting for next order...</h2>";
         const btn = document.getElementById("complete-btn");
         if (btn) btn.remove();
+        removeRecipeElements();
       }
 
       function moveToLog() {

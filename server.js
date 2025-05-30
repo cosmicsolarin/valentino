@@ -49,16 +49,102 @@ const paymentOptions = [
   "Dare Card (Bold)",
   "Dare Card (Spicy)",
   "A clothing item",
+  "Draw from Deck",
 ];
 
 const drinks = [
-  "Bittersweet Sin",
-  "Bare & Bubbly",
-  "The Tease",
-  "Dark Desire",
-  "The Body Shot",
-  "Sweet Surrender",
+  "Naked Citrus",
+  "Slap & Tickle",
+  "Lip Lock",
+  "Hot Flash",
+  "Gag Reflex",
+  "Tangled Sheets",
+  "Pulp Friction",
+  "Sin on Ice",
+  "The Morning After",
 ];
+
+const vodkaDrinks = {
+  "Naked Citrus": {
+    ingredients: [
+      "grapefruit vodka",
+      "lime juice",
+      "tonic water",
+      "ice",
+      "mint leaves",
+    ],
+    method:
+      "Shake vodka with lime juice and ice, pour into glass, top with tonic water and garnish with mint.",
+  },
+  "Slap & Tickle": {
+    ingredients: ["grapefruit vodka", "cranberry juice", "lime juice", "ice"],
+    method:
+      "Shake vodka, cranberry juice, and lime juice with ice. Strain into a chilled glass.",
+  },
+  "Lip Lock": {
+    ingredients: [
+      "grapefruit vodka",
+      "soda water",
+      "lime juice",
+      "salt",
+      "ice",
+    ],
+    method:
+      "Rim glass with salt, fill with ice, add vodka and lime juice, top with soda water.",
+  },
+  "Hot Flash": {
+    ingredients: [
+      "grapefruit vodka",
+      "tonic water",
+      "mint leaves",
+      "lime juice",
+      "ice",
+    ],
+    method:
+      "Muddle mint, shake with vodka and lime juice, top with tonic water over ice.",
+  },
+  "Gag Reflex": {
+    ingredients: ["grapefruit vodka", "cranberry juice", "lime", "ice"],
+    method:
+      "Squeeze lime into shaker with vodka and cranberry, shake well, strain into glass over ice.",
+  },
+  "Tangled Sheets": {
+    ingredients: [
+      "grapefruit vodka",
+      "soda water",
+      "mint leaves",
+      "ice",
+      "lime juice",
+    ],
+    method:
+      "Muddle mint, mix with vodka and lime, serve over ice and top with soda water.",
+  },
+  "Pulp Friction": {
+    ingredients: ["grapefruit vodka", "lime juice", "ice", "tonic water"],
+    method:
+      "Build in glass over ice: vodka, lime juice, and tonic water. Stir gently.",
+  },
+  "Sin on Ice": {
+    ingredients: ["grapefruit vodka", "cranberry juice", "ice", "mint leaves"],
+    method:
+      "Shake vodka and cranberry with ice, pour over fresh mint in a glass.",
+  },
+  "The Morning After": {
+    ingredients: ["grapefruit vodka", "juice of choice", "ice", "lime juice"],
+    method: "Mix vodka and juice with a splash of lime, serve cold over ice.",
+  },
+  "Cruel Summer": {
+    ingredients: [
+      "grapefruit vodka",
+      "soda water",
+      "mint leaves",
+      "lime juice",
+      "ice",
+    ],
+    method:
+      "Shake vodka and lime with ice, pour into glass, top with soda and mint.",
+  },
+};
 
 function getRandomReward() {
   const drink = drinks[Math.floor(Math.random() * drinks.length)];
@@ -71,7 +157,9 @@ function getRandomReward() {
     dare = dareList[Math.floor(Math.random() * dareList.length)];
   }
 
-  return { drink, payment, dare };
+  const recipe = vodkaDrinks[drink] || null;
+
+  return { drink, payment, dare, recipe };
 }
 
 // Store clients for SSE
@@ -112,9 +200,9 @@ app.post("/api/update", (req, res) => {
   const { user } = req.body;
   if (!user) return res.status(400).send("Missing user field");
 
-  const { drink, payment, dare } = getRandomReward();
+  const { drink, payment, dare, recipe } = getRandomReward();
 
-  const scan = { user, drink, cost: payment, dare };
+  const scan = { user, drink, cost: payment, dare, recipe };
   scans.push(scan);
 
   // Notify SSE clients
