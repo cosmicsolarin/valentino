@@ -359,14 +359,34 @@
         try {
           const data = JSON.parse(event.data);
           const order = data[data.length - 1];
-          if (order.order) {
-            showCurrentOrder(order.order);
-            addLogEntry(order.order);
+          console.log(order);
+          if (order) {
+            showCurrentOrder(order);
+            addLogEntry(order);
           }
         } catch (e) {
           console.error("Error parsing event data", e);
         }
       };
+      const testOrder = {
+        user: "Meghs",
+        drink: "Naked Citrus",
+        cost: "Dare Card (Flirty)",
+        dare: "Give me a gentle kiss on my wrist.",
+        recipe: {
+          ingredients: [
+            "grapefruit vodka",
+            "lime juice",
+            "tonic water",
+            "ice",
+            "mint leaves",
+          ],
+          method:
+            "Shake vodka with lime juice and ice, pour into glass, top with tonic water and garnish with mint.",
+        },
+      };
+
+      showCurrentOrder(testOrder);
     </script>
   </body>
 </html>
