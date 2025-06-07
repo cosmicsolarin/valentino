@@ -48,101 +48,115 @@ const paymentOptions = [
   "Dare Card (Flirty)",
   "Dare Card (Bold)",
   "Dare Card (Spicy)",
+  "Dare Card (Bold)",
+  "Dare Card (Spicy)",
+  "Dare Card (Bold)",
+  "Dare Card (Spicy)",
+  "A clothing item",
+  "A clothing item",
+  "A clothing item",
+  "A clothing item",
+  "A clothing item",
+  "A clothing item",
   "A clothing item",
   "Draw from Deck",
+  "Draw from Deck",
+  "Draw from Deck",
+  "Draw from Deck",
+  "Draw from Deck",
+  "Draw from Deck",
 ];
-
 const drinks = [
-  "Naked Citrus",
-  "Slap & Tickle",
-  "Lip Lock",
-  "Hot Flash",
-  "Gag Reflex",
-  "Tangled Sheets",
-  "Pulp Friction",
-  "Sin on Ice",
-  "The Morning After",
+  "Barely Legal",
+  "Dirty Little Secret",
+  "Cold Hard Tease",
+  "Sin & Skin",
+  "One Night Only",
+  "Drunk in Lace",
+  "Bad Intentions",
+  "First Bite",
+  "Glow of Shame",
+  "Thigh Highs",
 ];
 
 const vodkaDrinks = {
-  "Naked Citrus": {
+  "Barely Legal": {
     ingredients: [
-      "grapefruit vodka",
-      "lime juice",
-      "tonic water",
-      "ice",
-      "mint leaves",
-    ],
-    method:
-      "Shake vodka with lime juice and ice, pour into glass, top with tonic water and garnish with mint.",
-  },
-  "Slap & Tickle": {
-    ingredients: ["grapefruit vodka", "cranberry juice", "lime juice", "ice"],
-    method:
-      "Shake vodka, cranberry juice, and lime juice with ice. Strain into a chilled glass.",
-  },
-  "Lip Lock": {
-    ingredients: [
-      "grapefruit vodka",
+      "vodka",
+      "blue curaçao syrup",
+      "lemon juice",
       "soda water",
-      "lime juice",
-      "salt",
       "ice",
     ],
     method:
-      "Rim glass with salt, fill with ice, add vodka and lime juice, top with soda water.",
+      "Shake vodka, blue curaçao syrup, and lemon juice with ice. Pour into a glass and top with soda water.",
   },
-  "Hot Flash": {
-    ingredients: [
-      "grapefruit vodka",
-      "tonic water",
-      "mint leaves",
-      "lime juice",
-      "ice",
-    ],
+  "Dirty Little Secret": {
+    ingredients: ["vodka", "strawberry syrup", "lime juice", "ice"],
     method:
-      "Muddle mint, shake with vodka and lime juice, top with tonic water over ice.",
+      "Shake vodka, strawberry syrup, and lime juice with ice. Serve in a chilled glass.",
   },
-  "Gag Reflex": {
-    ingredients: ["grapefruit vodka", "cranberry juice", "lime", "ice"],
+  "Cold Hard Tease": {
+    ingredients: ["vodka", "blue curaçao syrup", "lime juice", "ice"],
     method:
-      "Squeeze lime into shaker with vodka and cranberry, shake well, strain into glass over ice.",
+      "Stir vodka and blue curaçao with lime juice over ice. Serve straight and cold.",
   },
-  "Tangled Sheets": {
+  "Sin & Skin": {
     ingredients: [
-      "grapefruit vodka",
+      "vodka",
+      "strawberry syrup",
+      "lemon juice",
       "soda water",
-      "mint leaves",
       "ice",
-      "lime juice",
     ],
     method:
-      "Muddle mint, mix with vodka and lime, serve over ice and top with soda water.",
+      "Shake vodka, strawberry syrup, and lemon juice. Pour over ice and top with soda water.",
   },
-  "Pulp Friction": {
-    ingredients: ["grapefruit vodka", "lime juice", "ice", "tonic water"],
-    method:
-      "Build in glass over ice: vodka, lime juice, and tonic water. Stir gently.",
-  },
-  "Sin on Ice": {
-    ingredients: ["grapefruit vodka", "cranberry juice", "ice", "mint leaves"],
-    method:
-      "Shake vodka and cranberry with ice, pour over fresh mint in a glass.",
-  },
-  "The Morning After": {
-    ingredients: ["grapefruit vodka", "juice of choice", "ice", "lime juice"],
-    method: "Mix vodka and juice with a splash of lime, serve cold over ice.",
-  },
-  "Cruel Summer": {
+  "One Night Only": {
     ingredients: [
-      "grapefruit vodka",
-      "soda water",
-      "mint leaves",
+      "vodka",
+      "blue curaçao syrup",
+      "strawberry syrup",
       "lime juice",
       "ice",
     ],
     method:
-      "Shake vodka and lime with ice, pour into glass, top with soda and mint.",
+      "Shake all ingredients with ice. Pour into a glass and garnish if desired.",
+  },
+  "Drunk in Lace": {
+    ingredients: ["vodka", "strawberry syrup", "ice"],
+    method:
+      "Shake vodka with strawberry syrup and serve over ice. Optional: Add a dash of lime juice.",
+  },
+  "Bad Intentions": {
+    ingredients: ["vodka", "blue curaçao syrup", "lemon juice", "ice"],
+    method: "Shake vodka and blue curaçao with lemon juice. Serve over ice.",
+  },
+  "First Bite": {
+    ingredients: [
+      "vodka",
+      "strawberry syrup",
+      "lime juice",
+      "soda water",
+      "ice",
+    ],
+    method:
+      "Shake strawberry syrup, vodka, and lime juice with ice. Top with soda water in a highball glass.",
+  },
+  "Glow of Shame": {
+    ingredients: ["vodka", "lemon juice", "blue curaçao syrup", "ice"],
+    method:
+      "Shake vodka, lemon juice, and blue curaçao with ice, strain into a short glass.",
+  },
+  "Thigh Highs": {
+    ingredients: [
+      "vodka",
+      "strawberry syrup",
+      "lime juice",
+      "lemon juice",
+      "ice",
+    ],
+    method: "Shake all ingredients with ice and pour into a lowball glass.",
   },
 };
 
